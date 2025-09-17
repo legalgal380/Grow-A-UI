@@ -24,6 +24,7 @@ local Themes = {
     }
 }
 
+-- Create the main window
 function GrowUI:CreateWindow(themeName)
     local theme = Themes[themeName] or Themes["Spring"]
 
@@ -40,28 +41,31 @@ function GrowUI:CreateWindow(themeName)
 
     Instance.new("UICorner", frame)
 
-    return frame
+    return frame, theme
 end
 
-function GrowUI:AddMinimize(frame, options)
+-- Create a customizable minimize button
+function GrowUI:AddMinimizeButton(parentFrame, options)
     options = options or {}
-    
+    local color = options.Color or Color3.fromRGB(80, 80, 80)
     local icon = options.Icon or "rbxassetid://18879572289"
-    local buttonColor = options.Color or Color3.fromRGB(255, 255, 255)
-    local size = options.Size or UDim2.new(0, 30, 0, 30)
-    local position = options.Position or UDim2.new(1, -35, 0, 5)
+
+    local holder = Instance.new("Frame")
+    holder.Size = UDim2.new(0, 35, 0, 35)
+    holder.Position = UDim2.new(1, -40, 0, 5)
+    holder.BackgroundColor3 = color
+    holder.Parent = parentFrame
+    Instance.new("UICorner", holder)
 
     local minimize = Instance.new("ImageButton")
-    minimize.Size = size
-    minimize.Position = position
-    minimize.BackgroundColor3 = buttonColor
+    minimize.Size = UDim2.new(1, -5, 1, -5)
+    minimize.Position = UDim2.new(0.5, -15, 0.5, -15)
+    minimize.BackgroundTransparency = 1
     minimize.Image = icon
-    minimize.Parent = frame
-
-    Instance.new("UICorner", minimize)
+    minimize.Parent = holder
 
     minimize.MouseButton1Click:Connect(function()
-        frame.Visible = not frame.Visible
+        parentFrame.Visible = not parentFrame.Visible
     end)
 
     return minimize
