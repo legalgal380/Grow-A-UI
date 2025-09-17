@@ -34,6 +34,19 @@ local function ApplyDraggable(frame)
 	end)
 end
 
+local function AddUIEffects(obj, corner, stroke)
+	if corner then
+		local c = Instance.new("UICorner")
+		c.CornerRadius = UDim.new(0, corner)
+		c.Parent = obj
+	end
+	if stroke then
+		local s = Instance.new("UIStroke")
+		s.Thickness = stroke
+		s.Parent = obj
+	end
+end
+
 local function CreateMenu(config)
 	local theme = Themes[config.Theme or "Default"]
 	local player = Players.LocalPlayer
@@ -49,11 +62,13 @@ local function CreateMenu(config)
 	main.Position = UDim2.new(0.5, 0, 0.5, 0)
 	main.AnchorPoint = Vector2.new(0.5, 0.5)
 	main.BackgroundColor3 = theme.MainColor
+	AddUIEffects(main, 8, 2)
 	ApplyDraggable(main)
 	
 	local top = Instance.new("Frame", main)
 	top.Size = UDim2.new(1, 0, 0, 36)
 	top.BackgroundColor3 = theme.TopBarColor
+	AddUIEffects(top, 8, 2)
 	
 	local title = Instance.new("TextLabel", top)
 	title.Size = UDim2.new(1, -100, 1, 0)
@@ -71,6 +86,7 @@ local function CreateMenu(config)
 	closeBtn.Text = "X"
 	closeBtn.TextScaled = true
 	closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+	AddUIEffects(closeBtn, 6, 1.5)
 	
 	local minBtn = Instance.new("TextButton", top)
 	minBtn.Size = UDim2.new(0, 40, 0, 28)
@@ -79,11 +95,13 @@ local function CreateMenu(config)
 	minBtn.Text = "-"
 	minBtn.TextScaled = true
 	minBtn.TextColor3 = Color3.fromRGB(255,255,255)
+	AddUIEffects(minBtn, 6, 1.5)
 	
 	local content = Instance.new("Frame", main)
 	content.Size = UDim2.new(1, -20, 1, -50)
 	content.Position = UDim2.new(0, 10, 0, 40)
 	content.BackgroundColor3 = theme.ContentColor
+	AddUIEffects(content, 8, 2)
 	
 	minBtn.MouseButton1Click:Connect(function()
 		local goal = main.Size.Y.Offset > 40 and UDim2.new(0,384,0,36) or UDim2.new(0,384,0,252)
