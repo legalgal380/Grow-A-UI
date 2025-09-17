@@ -84,4 +84,4 @@ function GrowAUI:CreateMenu(options)
 	return Gui
 end
 
-return GrowAUIa
+return GrowAUI
