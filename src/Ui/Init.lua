@@ -1,122 +1,121 @@
-local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
-local Lighting = game:GetService("Lighting")
+local CollectionService = game:GetService("CollectionService")
+local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+local GrowAUI = {}
 
-local Themes = {
-	Default = {
-		MainColor = Color3.fromRGB(255, 178, 31),
-		TabColor = Color3.fromRGB(216, 150, 26),
-		TopBarColor = Color3.fromRGB(97, 255, 33),
-		ContentColor = Color3.fromRGB(216, 150, 26)
-	}
-}
-
-local function ApplyDraggable(frame)
-	local dragging, dragInput, dragStart, startPos
-	frame.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-			dragging = true
-			dragStart = input.Position
-			startPos = frame.Position
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then dragging = false end
-			end)
-		end
-	end)
-	frame.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
-	end)
-	game:GetService("UserInputService").InputChanged:Connect(function(input)
-		if input == dragInput and dragging then
-			local delta = input.Position - dragStart
-			frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-		end
-	end)
-end
-
-local function AddUIEffects(obj, corner, stroke)
-	if corner then
-		local c = Instance.new("UICorner")
-		c.CornerRadius = UDim.new(0, corner)
-		c.Parent = obj
+function GrowAUI:CreateMenu(config)
+	local Gui = Instance.new("ScreenGui")
+	Gui.Name = config.Name
+	Gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	Gui.Parent = PlayerGui
+	CollectionService:AddTag(Gui, "main")
+	
+	local function makeCornerStroke(parent, radius)
+		local c = Instance.new("UICorner", parent)
+		c.CornerRadius = radius or UDim.new(0, 4)
+		Instance.new("UIStroke", parent)
 	end
-	if stroke then
-		local s = Instance.new("UIStroke")
-		s.Thickness = stroke
-		s.Parent = obj
+	
+	local MainFrame = Instance.new("ImageLabel", Gui)
+	MainFrame.Name = "MainFrame"
+	MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+	MainFrame.Size = UDim2.new(0, 384, 0, 252)
+	MainFrame.BackgroundColor3 = Color3.fromRGB(255, 178, 31)
+	MainFrame.Image = "rbxassetid://18878365966"
+	MainFrame.ScaleType = Enum.ScaleType.Tile
+	MainFrame.TileSize = UDim2.new(0.5, 0, 0.5, 0)
+	makeCornerStroke(MainFrame)
+	
+	local Tabs = Instance.new("ImageLabel", MainFrame)
+	Tabs.Name = "Tabs"
+	Tabs.Position = UDim2.new(0, 8, 0, 36)
+	Tabs.Size = UDim2.new(0, 86, 0, 208)
+	Tabs.BackgroundColor3 = Color3.fromRGB(216, 150, 26)
+	Tabs.Image = "rbxassetid://18878365966"
+	Tabs.ScaleType = Enum.ScaleType.Tile
+	Tabs.TileSize = UDim2.new(2, 0, 0.5, 0)
+	makeCornerStroke(Tabs)
+	
+	local TopBar = Instance.new("ImageLabel", MainFrame)
+	TopBar.Name = "TopBar"
+	TopBar.Position = UDim2.new(0, 0, 0, -14)
+	TopBar.Size = UDim2.new(0, 384, 0, 36)
+	TopBar.BackgroundColor3 = Color3.fromRGB(97, 255, 33)
+	TopBar.Image = "rbxassetid://18878365966"
+	TopBar.ScaleType = Enum.ScaleType.Tile
+	TopBar.TileSize = UDim2.new(0.2, 0, 2, 0)
+	makeCornerStroke(TopBar, UDim.new(0, 2))
+	
+	local Title = Instance.new("TextLabel", TopBar)
+	Title.Name = "Title"
+	Title.Text = config.Title
+	Title.Size = UDim2.new(0, 386, 0, 28)
+	Title.Position = UDim2.new(0, -110, 0, 4)
+	Title.BackgroundTransparency = 1
+	Title.TextColor3 = Color3.new(1,1,1)
+	Title.TextScaled = true
+	Instance.new("UIStroke", Title)
+	
+	local Desc = Instance.new("TextLabel", TopBar)
+	Desc.Name = "Desc"
+	Desc.Text = config.Desc
+	Desc.Size = UDim2.new(0, 386, 0, 12)
+	Desc.Position = UDim2.new(0, -32, 0, 18)
+	Desc.BackgroundTransparency = 1
+	Desc.TextColor3 = Color3.new(1,1,1)
+	Desc.TextScaled = true
+	Instance.new("UIStroke", Desc)
+	
+	local Items = Instance.new("ImageLabel", TopBar)
+	Items.Name = "Items"
+	Items.Position = UDim2.new(0, 236, 0, 6)
+	Items.Size = UDim2.new(0, 144, 0, 26)
+	Items.BackgroundColor3 = Color3.fromRGB(85, 225, 29)
+	Items.Image = "rbxassetid://18878365966"
+	Items.ScaleType = Enum.ScaleType.Tile
+	Items.TileSize = UDim2.new(0.5, 0, 2, 0)
+	makeCornerStroke(Items, UDim.new(0, 2))
+	
+	
+	local function makeButton(parent, name, txt, pos, color)
+		local b = Instance.new("TextButton", parent)
+		b.Name = name
+		b.Text = txt
+		b.Position = pos
+		b.Size = UDim2.new(0, 52, 0, 18)
+		b.BackgroundColor3 = color
+		b.TextColor3 = Color3.new(1,1,1)
+		b.TextScaled = true
+		Instance.new("UIStroke", b)
+		return b
+	end
+	
+	makeButton(Items, "CloseButton", "X", UDim2.new(0, 70, 0, 4), Color3.new(1,0,0))
+	makeButton(Items, "MinimizeButton", "-", UDim2.new(0, 6, 0, 4), Color3.fromRGB(255,170,37))
+	
+	local Content = Instance.new("ImageLabel", MainFrame)
+	Content.Name = "Content"
+	Content.Position = UDim2.new(0, 98, 0, 38)
+	Content.Size = UDim2.new(0, 276, 0, 206)
+	Content.BackgroundColor3 = Color3.fromRGB(216, 150, 26)
+	Content.Image = "rbxassetid://18878365966"
+	Content.ScaleType = Enum.ScaleType.Tile
+	Content.TileSize = UDim2.new(0.5, 0, 0.5, 0)
+	makeCornerStroke(Content)
+	
+	function GrowAUI:CreateMinimizeButton(config)
+	    local MinimizeUI = Instance.new("ImageLabel", Gui)
+		MinimizeUI.Name = "MinimizeUI"
+		MinimizeUI.Size = UDim2.new(0, 50, 0, 50)
+		MinimizeUI.Position = UDim2.new(0, 126, 0, 138)
+		MinimizeUI.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		MinimizeUI.Image = config.Icon
+		makeCornerStroke(MinimizeUI, UDim.new(1, 0))
 	end
 end
 
-local function CreateMenu(config)
-	local theme = Themes[config.Theme or "Default"]
-	local player = Players.LocalPlayer
-	local gui = Instance.new("ScreenGui", player.PlayerGui)
-	gui.Name = config.Name or "GrowAUIMenu"
-	
-	local blur = Instance.new("BlurEffect", Lighting)
-	blur.Size = 0
-	TweenService:Create(blur, TweenInfo.new(0.5), {Size = 20}):Play()
-	
-	local main = Instance.new("Frame", gui)
-	main.Size = UDim2.new(0, 384, 0, 252)
-	main.Position = UDim2.new(0.5, 0, 0.5, 0)
-	main.AnchorPoint = Vector2.new(0.5, 0.5)
-	main.BackgroundColor3 = theme.MainColor
-	AddUIEffects(main, 8, 2)
-	ApplyDraggable(main)
-	
-	local top = Instance.new("Frame", main)
-	top.Size = UDim2.new(1, 0, 0, 36)
-	top.BackgroundColor3 = theme.TopBarColor
-	AddUIEffects(top, 8, 2)
-	
-	local title = Instance.new("TextLabel", top)
-	title.Size = UDim2.new(1, -100, 1, 0)
-	title.Position = UDim2.new(0, 10, 0, 0)
-	title.BackgroundTransparency = 1
-	title.Text = config.Name or "Grow a UI"
-	title.TextColor3 = Color3.fromRGB(255,255,255)
-	title.Font = Enum.Font.GothamBold
-	title.TextScaled = true
-	
-	local closeBtn = Instance.new("TextButton", top)
-	closeBtn.Size = UDim2.new(0, 40, 0, 28)
-	closeBtn.Position = UDim2.new(1, -45, 0, 4)
-	closeBtn.BackgroundColor3 = Color3.fromRGB(255,0,0)
-	closeBtn.Text = "X"
-	closeBtn.TextScaled = true
-	closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
-	AddUIEffects(closeBtn, 6, 1.5)
-	
-	local minBtn = Instance.new("TextButton", top)
-	minBtn.Size = UDim2.new(0, 40, 0, 28)
-	minBtn.Position = UDim2.new(1, -90, 0, 4)
-	minBtn.BackgroundColor3 = Color3.fromRGB(255,170,37)
-	minBtn.Text = "-"
-	minBtn.TextScaled = true
-	minBtn.TextColor3 = Color3.fromRGB(255,255,255)
-	AddUIEffects(minBtn, 6, 1.5)
-	
-	local content = Instance.new("Frame", main)
-	content.Size = UDim2.new(1, -20, 1, -50)
-	content.Position = UDim2.new(0, 10, 0, 40)
-	content.BackgroundColor3 = theme.ContentColor
-	AddUIEffects(content, 8, 2)
-	
-	minBtn.MouseButton1Click:Connect(function()
-		local goal = main.Size.Y.Offset > 40 and UDim2.new(0,384,0,36) or UDim2.new(0,384,0,252)
-		TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = goal}):Play()
-	end)
-	
-	closeBtn.MouseButton1Click:Connect(function()
-		TweenService:Create(main, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-		TweenService:Create(blur, TweenInfo.new(0.5), {Size = 0}):Play()
-		wait(0.5)
-		gui:Destroy()
-		blur:Destroy()
-	end)
-	
-	return {Gui = gui, MainFrame = main, Content = content}
-end
 
-return {CreateMenu = CreateMenu, Themes = Themes}
+
+
+return GrowAUI
